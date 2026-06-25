@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<title>Voter Card Generator</title>
+<link href="https://fonts.googleapis.com/css?family=Hind" rel="stylesheet">
+<style>
+
+/* ========== TABS ========== */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: #e8e8e8; font-family: Arial, sans-serif; }
+
+.tab-bar {
+    display: flex;
+    background: #1a3c6e;
+    padding: 0 20px;
+}
+.tab-btn {
+    padding: 12px 30px;
+    cursor: pointer;
+    color: #aac4e8;
+    font-size: 15px;
+    font-weight: bold;
+    border: none;
+    background: none;
+    border-bottom: 3px solid transparent;
+}
+.tab-btn.active {
+    color: #fff;
+    border-bottom: 3px solid #fff;
+}
+
+.tab-content { display: none; padding: 20px; }
+.tab-content.active { display: block; }
+
+/* ========== FORM ========== */
+.form-wrapper {
+    max-width: 700px;
+    margin: 0 auto;
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.15);
+}
+.form-wrapper h2 {
+    text-align: center;
+    color: #1a3c6e;
+    margin-bottom: 16px;
+    font-size: 17px;
+}
+.form-row { display: flex; gap: 12px; margin-bottom: 12px; flex-wrap: wrap; }
+.form-group { flex: 1; min-width: 180px; }
+.form-group label {
+    display: block;
+    font-weight: bold;
+    font-size: 12px;
+    margin-bottom: 4px;
+    color: #333;
+}
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 7px 9px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 13px;
+    font-family: Arial, sans-serif;
+}
+.btn-row { text-align: center; margin-top: 15px; }
+.btn {
+    padding: 10px 28px;
+    border: none;
+    border-radius: 5px;
+    font-size: 14px;
+    cursor: pointer;
+    margin: 0 5px;
+    color: white;
+    font-weight: bold;
+}
+.btn-update { background: #0066cc; }
+.btn-print  { background: #28a745; }
+
+/* ========== CARD OUTPUT ========== */
+@font-face {
+    font-family: mangal;
+    src: url(baap/NotoSans-SemiBold_11);
+}
+main.bg {
+    font-family: 'arial', mangal;
+    font-weight: 600;
+}
+.firstpage {
+    background-image: url(images/hindi.jpg);
+    height: 1400px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    margin-right: 30px;
+    width: 1000px;
+    float: none;
+    position: relative;
+    font-size: 12px;
+    margin-bottom: 20px;
+}
+.secondpage {
+    font-size: 10px;
+    font-weight: 600;
+    box-sizing: border-box;
+    padding: 14px;
+    position: absolute;
+    top: 115px;
+    width: 275px;
+    margin-left: 322px;
+    left: 353px;
+}
+.gender span.label, .dob span.label { width: 16px; display: inline-block; }
+.imagecontainer { position: absolute; top: 268px; left: 59px; }
+.imagecontainers { position: absolute; top: 240px; left: 395px; }
+img.barcode {
+    width: 108px; height: 108px;
+    position: relative; top: 128px; right: 123px;
+}
+img.qrcode {
+    width: 208px; height: 208px;
+    position: relative; top: 258px; left: 20px;
+}
+img.picture {
+    width: 98px; height: 132px;
+    border: ridge; border-radius: 3px; border-color: #bfc1c6;
+}
+img.pictures {
+    opacity: 0.7; width: 30px; height: 40px;
+    border: ridge; border-radius: 0px; border-color: #bfc1c6;
+}
+.epicnumberback { position: absolute; top: 423px; right: 296px; font-size: 11.5px; }
+.epicnumber     { position: absolute; top: 258px; right: 296px; font-size: 11.5px; }
+.epicnumberfront {
+    position: absolute; top: 20px; left: 20px;
+    font-size: 6px; transform: rotate(-90deg);
+}
+.epicnumberphoto { position: absolute; top: 10px; left: -328px; font-size: 12px; }
+.settable { position: absolute; top: 268px; left: 170px; }
+.tablecss { font-family: arial; font-size: 10px; font-weight: bold; }
+.gender span.value { text-transform: capitalize; }
+.secondpage .gender { margin-bottom: 4px; }
+.secondpage .dob { position: relative; margin-bottom: 4px; }
+.secondpage .dob span.value { top: -5px; position: relative; }
+.address_regional { margin-bottom: 5px; margin-top: -50px; }
+.address { margin-bottom: 48px; }
+.nirvachan .date { width: 250px; margin-bottom: 60px; float: left; }
+.dates { width: 250px; margin-top: -270px; margin-left: -98px; float: left; }
+.qrdate { width: 250px; margin-top: 135px; float: left; margin-left: -718px; }
+.nirvachan .nirvachanofficer {
+    float: left; width: 245px; margin-right: 10px;
+    text-align: left; position: relative;
+}
+.nirvachanofficers {
+    float: left; width: 245px; margin-left: -40px;
+    bottom: 38px; text-align: left; position: relative;
+}
+img.officersign {
+    position: absolute; height: 40px; width: 40px;
+    top: -65px; left: 173px;
+}
+.nirvachan:before, .nirvachan:after { display: block; content: ''; clear: both; }
+.nirvachan { margin-bottom: 140px; }
+.assemballysankhya .dates {
+    margin-top: 30px; margin-left: -10px;
+    font-size: 14px; font-weight: bold;
+}
+.assemballysankhya { margin-bottom: 10px; }
+.bhagsankhya .regional { margin-bottom: 15px; }
+.bhagsankhyas .regionals { margin-bottom: 15px; }
+.img { -webkit-filter: grayscale(100%); filter: grayscale(100%); }
+
+@media print {
+    * { -webkit-print-color-adjust: exact; }
+    @page { size: auto; margin: 0mm; }
+    a[href]:after { content: none !important; }
+    .tab-bar, #formTab { display: none !important; }
+    #outputTab { display: block !important; }
+}
+</style>
+</head>
+<body>
+
+<!-- TAB BUTTONS -->
+<div class="tab-bar">
+    <button class="tab-btn active" onclick="showTab('formTab', this)">📝 Form</button>
+    <button class="tab-btn"       onclick="showTab('outputTab', this)">🪪 Card Output</button>
+</div>
+
+<!-- ==================== TAB 1: FORM ==================== -->
+<div id="formTab" class="tab-content active">
+<div class="form-wrapper">
+    <h2>Voter Card Generator</h2>
+
+    <div class="form-row">
+        <div class="form-group">
+            <label>नाम (Hindi)</label>
+            <input type="text" id="hindiName" value="मुन्नू अहमद">
+        </div>
+        <div class="form-group">
+            <label>Name (English)</label>
+            <input type="text" id="engName" value="Munnu Ahmad">
+        </div>
+    </div>
+
+    <div class="form-row">
+        <div class="form-group">
+            <label>पिता का नाम (Hindi)</label>
+            <input type="text" id="hindiFather" value="इमामुद्दीन">
+        </div>
+        <div class="form-group">
+            <label>Father Name (English)</label>
+            <input type="text" id="engFather" value="Imamuddin">
+        </div>
+    </div>
+
+    <div class="form-row">
+        <div class="form-group">
+            <label>Gender / लिंग</label>
+            <select id="gender">
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Other">Other</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Date of Birth / जन्मतिथि</label>
+            <input type="text" id="dob" value="12-06-1976">
+        </div>
+        <div class="form-group">
+            <label>EPIC Number</label>
+            <input type="text" id="epic" value="ZSL3456780">
+        </div>
+    </div>
+
+    <div class="form-row">
+        <div class="form-group">
+            <label>पता (Hindi)</label>
+            <textarea id="hindiAddress" rows="2">रिफाई मोहल्ला, खडी नाका, चिंचणी, वरोर, पो. चिंचणी, जिल्हा: ठाणे, महाराष्ट्र - 401503</textarea>
+        </div>
+        <div class="form-group">
+            <label>Address (English)</label>
+            <textarea id="engAddress" rows="2">Rifai Mohalla, Khadi Naka, Chinchani, Varor, PO: Chinchani, DIST: Thane, Maharashtra - 401503</textarea>
+        </div>
+    </div>
+
+    <div class="form-row">
+        <div class="form-group">
+            <label>Serial No.</label>
+            <input type="text" id="serialNo" value="NA">
+        </div>
+        <div class="form-group">
+            <label>Assembly / विधानसभा</label>
+            <input type="text" id="assembly" value="130 - पालघर">
+        </div>
+        <div class="form-group">
+            <label>Download Date</label>
+            <input type="text" id="downloadDate" value="18/11/2024">
+        </div>
+    </div>
+
+    <div class="form-row">
+        <div class="form-group">
+            <label>भाग संख्या (Hindi)</label>
+            <input type="text" id="partNoHindi" value="49- के.डी. हायस्कूल, चिंचणी, खोली क्रमांक २">
+        </div>
+        <div class="form-group">
+            <label>Part No. (English)</label>
+            <input type="text" id="partNoEng" value="49- K.D.HIGH SCHOOL CHINCHANI ROOM NO.2">
+        </div>
+    </div>
+
+    <div class="form-row">
+        <div class="form-group">
+            <label>Polling Station (Hindi)</label>
+            <input type="text" id="pollingHindi" value="के.डी. हायस्कूल चिंचणी">
+        </div>
+        <div class="form-group">
+            <label>Polling Station (English)</label>
+            <input type="text" id="pollingEng" value="K.D.HIGH SCHOOL CHINCHANI">
+        </div>
+    </div>
+
+    <div class="form-row">
+        <div class="form-group">
+            <label>Poll Date / मतदान तिथि</label>
+            <input type="text" id="pollDate" value="NA">
+        </div>
+        <div class="form-group">
+            <label>Poll Timings / समय</label>
+            <input type="text" id="pollTime" value="NA">
+        </div>
+    </div>
+
+    <div class="form-row">
+        <div class="form-group">
+            <label>Upload Photo</label>
+            <input type="file" id="photoUpload" accept="image/*">
+        </div>
+        <div class="form-group">
+            <label>Upload Signature</label>
+            <input type="file" id="signUpload" accept="image/*">
+        </div>
+    </div>
+
+    <div class="btn-row">
+        <button class="btn btn-update" onclick="updateCard()">
+            🔄 Update Card
+        </button>
+        <button class="btn btn-print" onclick="window.print()">
+            🖨️ Print
+        </button>
+    </div>
+</div>
+</div>
+
+<!-- ==================== TAB 2: CARD OUTPUT ==================== -->
+<div id="outputTab" class="tab-content">
+<main class="bg">
+    <div class="row">
+        <div class="firstpage">
+
+            <!-- Main Photo -->
+            <div class="imagecontainer">
+                <img id="mainPhoto" src="uploads/55137mn.jpg" class="picture">
+            </div>
+
+            <!-- Small Photo + Signature + EPIC -->
+            <div class="imagecontainers img">
+                <div class="epicnumberfront font-bold" id="epicFront">ZSL3456780</div>
+                <div class="epicnumberphoto font-bold" id="epicPhoto">ZSL3456780</div>
+                <img class="officersign" id="signImg"
+                     src="https://toppng.com/uploads/preview/signature-png-115539500690fdntr4lhu.png">
+                <img id="smallPhoto" src="uploads/55137mn.jpg" class="pictures">
+            </div>
+
+            <!-- Name / Details Table -->
+            <div class="settable">
+                <table class="tablecss" style="line-height:1.2; font-weight:bold; font-size:12px">
+                    <tr><td id="hindiNameTd">नाम: मुन्नू अहमद</td><td></td></tr>
+                    <tr><td id="engNameTd">Name : Munnu Ahmad</td><td></td></tr>
+                    <tr><td id="hindiFatherTd">पिता का नाम : इमामुद्दीन</td><td></td></tr>
+                    <tr><td id="engFatherTd">Father Name : Imamuddin</td><td></td></tr>
+                    <tr><td id="genderTd">लिंग/Gender : Male</td><td></td></tr>
+                    <tr>
+                        <td id="dobTd">जन्मतिथि/आयु<br>Date Of Birth/Age : 12-06-1976</td>
+                        <td><br></td>
+                    </tr>
+                </table>
+            </div>
+
+            <!-- QR Code (front) -->
+            <div class="imagecontainer">
+                <img id="qrCode1"
+                     src="http://api.qrserver.com/v1/create-qr-code/?data=ZSL3456780&size=100x100"
+                     class="qrcode">
+            </div>
+
+        </div><!-- /firstpage -->
+
+        <!-- SECOND PAGE (back of card) -->
+        <div class="secondpage">
+
+            <!-- Barcode -->
+            <img id="qrCode2"
+                 src="http://api.qrserver.com/v1/create-qr-code/?data=ZSL3456780&size=100x100"
+                 class="barcode">
+
+            <!-- EPIC Back -->
+            <div class="epicnumber font-bold" id="epicBack">ZSL3456780</div>
+
+            <!-- Hindi Address -->
+            <div class="address_regional">
+                <span class="label">पता : </span>
+                <span class="value" id="hindiAddr">
+                    रिफाई मोहल्ला, खडी नाका, चिंचणी, वरोर, पो. चिंचणी, जिल्हा: ठाणे, महाराष्ट्र - 401503
+                </span>
+            </div>
+
+            <!-- English Address -->
+            <div class="address">
+                <span class="label">Address : </span>
+                <span class="value" id="engAddr">
+                    Rifai Mohalla, Khadi Naka, Chinchani, Varor, PO: Chinchani, DIST: Thane, Maharashtra - 401503
+                </span>
+            </div>
+
+            <div class="imagecontainer">
+                <div class="nirvachanofficers">
+                    <span class="label">
+                        निर्वाचक रजिस्ट्रीकरण अधिकारी : 130 - पालघर<br>
+                        Electoral Registration Officer :
+                    </span>
+                </div>
+
+                <div class="imagecontainer">
+                    <div class="dates">
+                        <span class="value" id="dlDate1">Download Date-: 18/11/2024</span>
+                    </div>
+                </div>
+
+                <div class="assemballysankhya">
+                    <div class="dates">
+                        <div class="regional font-bold" style="margin-top:90px;" id="epicAssembly">
+                            : ZSL3456780
+                        </div>
+                    </div>
+
+                    <div class="assemballysankhya">
+                        <div class="dates">
+                            <span class="label" id="serialNoTd">: NA</span>
+                        </div>
+
+                        <div class="assemballysankhya">
+                            <div class="dates">
+                                <span class="label" id="assemblyTd">: 130 - पालघर</span>
+                            </div>
+
+                            <div class="assemballysankhya">
+                                <div class="dates">: </div>
+                            </div>
+
+                            <div class="assemballysankhya">
+                                <div class="dates">
+                                    <span class="label" id="partHindiTd">
+                                        : 49- के.डी. हायस्कूल, चिंचणी, खोली क्रमांक २
+                                    </span>
+                                </div>
+                                <div class="dates">
+                                    <div id="partEngTd">
+                                        : 49- K.D.HIGH SCHOOL CHINCHANI ROOM NO.2
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="bhagsankhyas">
+                                <div class="dates">
+                                    <span style="font-size:14px" id="pollingHindiTd">
+                                        : के.डी. हायस्कूल चिंचणी
+                                    </span>
+                                </div>
+                                <div class="assemballysankhya">
+                                    <div class="dates">
+                                        <div id="pollingEngTd">: K.D.HIGH SCHOOL CHINCHANI</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="imagecontainer">
+                                <div class="qrdate">
+                                    <span class="value" style="font-size:15px" id="dlDate2">
+                                        Download Date-: 18/11/2024
+                                    </span>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div><!-- /secondpage -->
+    </div>
+</main>
+</div><!-- /outputTab -->
+
+<script>
+/* ===== TAB SWITCH ===== */
+function showTab(tabId, btn) {
+    document.querySelectorAll('.tab-content').forEach(function(t){ t.classList.remove('active'); });
+    document.querySelectorAll('.tab-btn').forEach(function(b){ b.classList.remove('active'); });
+    document.getElementById(tabId).classList.add('active');
+    btn.classList.add('active');
+}
+
+/* ===== UPDATE CARD ===== */
+function updateCard() {
+
+    var hindiName    = document.getElementById('hindiName').value;
+    var engName      = document.getElementById('engName').value;
+    var hindiFather  = document.getElementById('hindiFather').value;
+    var engFather    = document.getElementById('engFather').value;
+    var gender       = document.getElementById('gender').value;
+    var dob          = document.getElementById('dob').value;
+    var epic         = document.getElementById('epic').value;
+    var hindiAddress = document.getElementById('hindiAddress').value;
+    var engAddress   = document.getElementById('engAddress').value;
+    var serialNo     = document.getElementById('serialNo').value;
+    var assembly     = document.getElementById('assembly').value;
+    var downloadDate = document.getElementById('downloadDate').value;
+    var partNoHindi  = document.getElementById('partNoHindi').value;
+    var partNoEng    = document.getElementById('partNoEng').value;
+    var pollingHindi = document.getElementById('pollingHindi').value;
+    var pollingEng   = document.getElementById('pollingEng').value;
+
+    /* EPIC */
+    document.getElementById('epicFront').textContent    = epic;
+    document.getElementById('epicPhoto').textContent    = epic;
+    document.getElementById('epicBack').textContent     = epic;
+    document.getElementById('epicAssembly').textContent = ': ' + epic;
+
+    /* Name & Details */
+    document.getElementById('hindiNameTd').textContent   = 'नाम: ' + hindiName;
+    document.getElementById('engNameTd').textContent     = 'Name : ' + engName;
+    document.getElementById('hindiFatherTd').textContent = 'पिता का नाम : ' + hindiFather;
+    document.getElementById('engFatherTd').textContent   = 'Father Name : ' + engFather;
+    document.getElementById('genderTd').textContent      = 'लिंग/Gender : ' + gender;
+    document.getElementById('dobTd').innerHTML =
+        'जन्मतिथि/आयु<br>Date Of Birth/Age : ' + dob;
+
+    /* Address */
+    document.getElementById('hindiAddr').textContent = hindiAddress;
+    document.getElementById('engAddr').textContent   = engAddress;
+
+    /* Other fields */
+    document.getElementById('serialNoTd').textContent    = ': ' + serialNo;
+    document.getElementById('assemblyTd').textContent    = ': ' + assembly;
+    document.getElementById('partHindiTd').textContent   = ': ' + partNoHindi;
+    document.getElementById('partEngTd').textContent     = ': ' + partNoEng;
+    document.getElementById('pollingHindiTd').textContent = ': ' + pollingHindi;
+    document.getElementById('pollingEngTd').textContent   = ': ' + pollingEng;
+
+    /* Download Date */
+    document.getElementById('dlDate1').textContent = 'Download Date-: ' + downloadDate;
+    document.getElementById('dlDate2').textContent = 'Download Date-: ' + downloadDate;
+
+    /* QR Codes */
+    var qrUrl = 'http://api.qrserver.com/v1/create-qr-code/?data='
+                + encodeURIComponent(epic) + '&size=100x100';
+    document.getElementById('qrCode1').src = qrUrl;
+    document.getElementById('qrCode2').src = qrUrl;
+
+    /* Photo Upload */
+    var photoFile = document.getElementById('photoUpload').files[0];
+    if (photoFile) {
+        var r = new FileReader();
+        r.onload = function(e) {
+            document.getElementById('mainPhoto').src  = e.target.result;
+            document.getElementById('smallPhoto').src = e.target.result;
+        };
+        r.readAsDataURL(photoFile);
+    }
+
+    /* Signature Upload */
+    var signFile = document.getElementById('signUpload').files[0];
+    if (signFile) {
+        var r2 = new FileReader();
+        r2.onload = function(e) {
+            document.getElementById('signImg').src = e.target.result;
+        };
+        r2.readAsDataURL(signFile);
+    }
+
+    /* Auto switch to Card Output tab */
+    var tabs = document.querySelectorAll('.tab-btn');
+    showTab('outputTab', tabs[1]);
+}
+</script>
+
+</body>
+</html>
