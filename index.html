@@ -119,14 +119,21 @@ main.bg {
 img.barcode {
     width: 108px; height: 108px;
     position: relative; top: 128px; right: 123px;
+    background: transparent;
+    mix-blend-mode: multiply;
 }
 img.qrcode {
     width: 208px; height: 208px;
     position: relative; top: 258px; left: 20px;
+    background: transparent;
+    mix-blend-mode: multiply;
 }
 img.picture {
     width: 98px; height: 132px;
     border: ridge; border-radius: 3px; border-color: #bfc1c6;
+    object-fit: cover;
+    background: transparent;
+    display: block;
 }
 img.pictures {
     opacity: 0.7; width: 30px; height: 40px;
@@ -145,7 +152,7 @@ img.pictures {
 .secondpage .gender { margin-bottom: 4px; }
 .secondpage .dob { position: relative; margin-bottom: 4px; }
 .secondpage .dob span.value { top: -5px; position: relative; }
-.address_regional { margin-bottom: 5px; margin-top: -50px; }
+.address_regional { margin-bottom: 5px; margin-top: -40px; }
 .address { margin-bottom: 48px; }
 .nirvachan .date { width: 250px; margin-bottom: 60px; float: left; }
 .dates { width: 250px; margin-top: -270px; margin-left: -98px; float: left; }
@@ -538,6 +545,8 @@ function updateCard() {
     if (photoFile) {
         var r = new FileReader();
         r.onload = function(e) {
+            var r = new FileReader();
+        r.onload = function(e) {
             document.getElementById('mainPhoto').src  = e.target.result;
             document.getElementById('smallPhoto').src = e.target.result;
         };
@@ -562,3 +571,5 @@ function updateCard() {
 
 </body>
 </html>
+    
+                                                        
